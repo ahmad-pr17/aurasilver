@@ -109,14 +109,16 @@ function Experience({ scrollProgress }) {
     const r2 = Math.min(1, Math.max(0, (progress - 0.5) * 2));
     
     // Pendant movement
-    pendantGroup.current.position.y = THREE.MathUtils.lerp(0, -2.9, r2); 
+    // Higher position: Pendant group at -1.0, Bail at 0.9 -> Final World Y = -0.1
+    pendantGroup.current.position.y = THREE.MathUtils.lerp(0, -1.0, r2); 
     pendantGroup.current.scale.setScalar(THREE.MathUtils.lerp(1.2, 0.7, r2));
     
     // Rotation logic
     pendantGroup.current.rotation.y = state.clock.getElapsedTime() * 0.3 + r1 * 4;
     
     // Pedestal movement - slides up from below
-    pedestalGroup.current.position.y = THREE.MathUtils.lerp(-15, -3.5, r2);
+    // Pedestal group at -1.6, Hook at 1.5 -> Final World Y = -0.1 (Matched!)
+    pedestalGroup.current.position.y = THREE.MathUtils.lerp(-15, -1.6, r2);
   });
 
   return (
