@@ -110,7 +110,9 @@ function Experience({ scrollProgress }) {
     
     // Pendant movement
     // Higher position: Pendant group at -1.0, Bail at 0.9 -> Final World Y = -0.1
+    // Added Z-offset of 0.4 to prevent clipping through the pedestal pillar
     pendantGroup.current.position.y = THREE.MathUtils.lerp(0, -1.0, r2); 
+    pendantGroup.current.position.z = THREE.MathUtils.lerp(0, 0.4, r2);
     pendantGroup.current.scale.setScalar(THREE.MathUtils.lerp(1.2, 0.7, r2));
     
     // Rotation logic
