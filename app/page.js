@@ -1,3 +1,8 @@
+"use client";
+import ThreeDPreview from "@/components/ThreeDPreview";
+import Link from "next/link";
+import { motion, useScroll, useTransform } from "framer-motion";
+
 export default function Home() {
   const { scrollYProgress } = useScroll();
 
