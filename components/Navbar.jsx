@@ -38,10 +38,37 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Toggle */}
-        <div className="mobile-toggle" onClick={() => setIsOpen(!isOpen)} style={{ display: 'none', cursor: 'pointer' }}>
+        <div className="mobile-toggle" onClick={() => setIsOpen(!isOpen)} style={{ display: 'none', cursor: 'pointer', zIndex: 1101 }}>
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -20 }}
+        transition={{ duration: 0.3 }}
+        style={{
+          display: isOpen ? 'flex' : 'none',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(10, 10, 12, 0.98)',
+          backdropFilter: 'blur(20px)',
+          zIndex: 1100,
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '2.5rem'
+        }}
+      >
+        <Link href="/" className="mobile-nav-link" onClick={() => setIsOpen(false)}>Home</Link>
+        <Link href="/shop" className="mobile-nav-link" onClick={() => setIsOpen(false)}>Shop</Link>
+        <Link href="/about" className="mobile-nav-link" onClick={() => setIsOpen(false)}>About</Link>
+        <Link href="/contact" className="mobile-nav-link" onClick={() => setIsOpen(false)}>Contact</Link>
+      </motion.div>
 
       <style jsx>{`
         .nav-link {
@@ -66,6 +93,12 @@ export default function Navbar() {
         }
         .nav-link:hover:after {
           width: 100%;
+        }
+        .mobile-nav-link {
+          font-size: 1.8rem;
+          font-family: var(--font-serif);
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
         }
         @media (max-width: 768px) {
           .desktop-menu { display: none !important; }
