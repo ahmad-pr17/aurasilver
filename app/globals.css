@@ -1,0 +1,49 @@
+:root {
+  --background: #0a0a0c;
+  --foreground: #f0f0f0;
+  --silver: #c0c0c0;
+  --silver-bright: #e0e0e0;
+  --silver-gradient: linear-gradient(135deg, #a0a0a0 0%, #e0e0e0 50%, #808080 100%);
+  --accent: #2c3e50;
+  --accent-light: #34495e;
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-outfit);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
