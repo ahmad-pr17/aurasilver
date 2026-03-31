@@ -78,9 +78,18 @@ export default function Home() {
           background: #0a0a0c;
         }
         .text-silver {
-          background: linear-gradient(135deg, #a0a0a0 0%, #ffffff 50%, #808080 100%);
+          background: linear-gradient(
+            to bottom,
+            #ffffff 0%,
+            #e0e0e0 20%,
+            #808080 50%,
+            #c0c0c0 70%,
+            #ffffff 100%
+          );
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
+          background-size: 100% 200%;
+          filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
         }
       `}</style>
     </main>
