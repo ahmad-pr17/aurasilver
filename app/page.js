@@ -18,8 +18,8 @@ export default function Home() {
 
   return (
     <main style={{ position: 'relative', height: '300vh' }}>
-      {/* Fixed 3D Canvas Background */}
-      <ThreeDPreview />
+      {/* Fixed 3D Canvas Background - Unified with Window Scroll */}
+      <ThreeDPreview scrollProgress={scrollYProgress} />
 
       {/* Hero Section */}
       <section style={{ height: '100vh', display: 'flex', alignItems: 'center', zIndex: 10, position: 'relative' }}>

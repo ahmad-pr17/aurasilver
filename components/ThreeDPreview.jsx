@@ -96,24 +96,24 @@ function PedestalModel({ ...props }) {
   );
 }
 
-function Experience() {
-  const scroll = useScroll();
+function Experience({ scrollProgress }) {
   const pendantGroup = useRef();
   const pedestalGroup = useRef();
 
   useFrame((state) => {
-    const r1 = scroll.range(0, 0.5); // Intro phase
-    const r2 = scroll.range(0.5, 1); // Docking phase
+    // We use the scrollProgress prop passed from the parent (Framer Motion)
+    const progress = scrollProgress.get(); 
+    
+    // Mapping progress to ranges [0, 0.5] and [0.5, 1]
+    const r1 = Math.min(1, Math.max(0, progress * 2));
+    const r2 = Math.min(1, Math.max(0, (progress - 0.5) * 2));
     
     // Pendant movement
-    // Pedestal lands at y = -3.5. Its hook is at 1.5. Total Y = -2.
-    // Pendant bail is at 0.9. Group needs to be at -2.9 to dock.
     pendantGroup.current.position.y = THREE.MathUtils.lerp(0, -2.9, r2); 
-    pendantGroup.current.position.z = THREE.MathUtils.lerp(0, 0, r2);
     pendantGroup.current.scale.setScalar(THREE.MathUtils.lerp(1.2, 0.7, r2));
     
     // Rotation logic
-    pendantGroup.current.rotation.y = state.clock.getElapsedTime() * 0.5 + r1 * 4;
+    pendantGroup.current.rotation.y = state.clock.getElapsedTime() * 0.3 + r1 * 4;
     
     // Pedestal movement - slides up from below
     pedestalGroup.current.position.y = THREE.MathUtils.lerp(-15, -3.5, r2);
@@ -142,19 +142,17 @@ function Experience() {
   );
 }
 
-export default function ThreeDPreview() {
+export default function ThreeDPreview({ scrollProgress }) {
   return (
     <div style={{ width: '100%', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0 }}>
       <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0, 8], fov: 35 }}>
         <color attach="background" args={["#0a0a0c"]} />
         <ambientLight intensity={0.5} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2000} castShadow />
+        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2500} castShadow />
         <pointLight position={[-5, 5, -5]} intensity={500} color="#3498db" />
 
         <Suspense fallback={null}>
-          <ScrollControls pages={3} damping={0.2}>
-            <Experience />
-          </ScrollControls>
+          <Experience scrollProgress={scrollProgress} />
           <Environment preset="city" />
           <BakeShadows />
         </Suspense>
