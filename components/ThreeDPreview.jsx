@@ -93,30 +93,40 @@ function Experience({ scrollProgress }) {
 
   useFrame((state) => {
     const progress = scrollProgress?.get() || 0;
-    const r1 = Math.min(1, Math.max(0, progress * 2));
+    // Smoother, less aggressive interpolation steps
+    const r1 = Math.min(1, Math.max(0, progress * 1.8));
     const r2 = Math.min(1, Math.max(0, (progress - 0.5) * 2));
 
-    // Target Final Positions - Adjusted for Visibility in lower center
-    // Pedestal Plate Y = -2.5 (safely within typical viewport bottom)
-    const targetPedestalY = -2.5;
-    // Pendant tip floats exactly above plate
-    // Scaled 6.5 model height is ~4.8. Origin top at 0. Tip is at -4.8. 
-    // We want tip at targetPedestalY + 0.1(plate) + 0.35(gap) = -2.05
-    // So PendantY - 4.8 = -2.05 => PendantY = 2.75
-    const targetPendantY = 1.75;
+    // Mouse Parallax Logic
+    const mouseX = state.mouse.x * 0.15; // Slightly reduced mouse sensitivity
+    const mouseY = state.mouse.y * 0.15;
 
-    pendantGroup.current.position.y = THREE.MathUtils.lerp(0.5, targetPendantY, r2);
-    pendantGroup.current.position.z = THREE.MathUtils.lerp(0, 0.55, r2);
-    pendantGroup.current.scale.setScalar(THREE.MathUtils.lerp(0.8, 0.55, r2));
+    // Movement & Vertical Scroll Path
+    // Drifts RIGHT during r1, the starts centering for the dock during r2
+    // Reduced from 2.5 to 1.25 for a more centered, balanced experience
+    const targetX = THREE.MathUtils.lerp(0, 1.25, r1) - THREE.MathUtils.lerp(0, 1.25, r2);
+    const targetY = THREE.MathUtils.lerp(1, 0, r1) + THREE.MathUtils.lerp(0, 1.5, r2);
 
-    pendantGroup.current.rotation.y = state.clock.getElapsedTime() * 0.4 + r1 * 6.28;
+    pendantGroup.current.position.x = targetX + mouseX;
+    pendantGroup.current.position.y = targetY + mouseY;
+    // Z-axis (Zoom) reduced from 3.5 to 1.5 peak
+    pendantGroup.current.position.z = THREE.MathUtils.lerp(0, 0, r1) - THREE.MathUtils.lerp(0, 0, r2);
 
-    pedestalGroup.current.position.y = THREE.MathUtils.lerp(-15, targetPedestalY, r2);
+    // Rotation: gentle spin + mouse tilt
+    pendantGroup.current.rotation.y = state.clock.getElapsedTime() * 0.25 + (r1 * Math.PI * 0.5) + (mouseX * 0.4);
+    pendantGroup.current.rotation.x = mouseY * 0.4;
+
+    // Scale: Subtle grow effect reduced from 1.4 to 1.2 peak
+    pendantGroup.current.scale.setScalar(THREE.MathUtils.lerp(1.1, 1.2, r1) - THREE.MathUtils.lerp(0, 0.4, r2));
+
+    // Pedestal comes from deep below and stays low for atmospheric footer background
+    pedestalGroup.current.position.y = THREE.MathUtils.lerp(-18, -6.5, r2);
+    pedestalGroup.current.position.x = 0;
   });
 
   return (
     <>
-      <Float speed={1.2} rotationIntensity={0.5} floatIntensity={0.5}>
+      <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
         <group ref={pendantGroup}>
           <PendantModel />
           <SilverWire radius={3.8} />
@@ -127,20 +137,23 @@ function Experience({ scrollProgress }) {
         <PedestalModel />
       </group>
 
-      <ContactShadows position={[0, -5, 0]} opacity={0.6} scale={20} blur={2.8} far={15} />
-      <Environment preset="studio" />
+      <ContactShadows position={[0, -5, 0]} opacity={0.4} scale={20} blur={3} far={15} />
+      <Environment preset="city" />
     </>
   );
 }
 
 export default function ThreeDPreview({ scrollProgress }) {
   return (
-    <div style={{ width: '100%', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0 }}>
-      <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0, 10], fov: 35 }}>
+    <div style={{ width: '100%', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0, pointerEvents: 'none' }}>
+      <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0, 12], fov: 35 }}>
         <color attach="background" args={["#0a0a0c"]} />
-        <ambientLight intensity={0.6} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={3500} castShadow />
-        <pointLight position={[-5, 5, -5]} intensity={1200} color="#1e5c3f" />
+        <ambientLight intensity={0.8} />
+
+        {/* Cinematic Rim Lights */}
+        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2500} castShadow color="#ffffff" />
+        <pointLight position={[-10, -5, 5]} intensity={1500} color="#e0e0ff" />
+        <pointLight position={[0, 10, -10]} intensity={800} color="#ffffff" />
 
         <Suspense fallback={null}>
           <Experience scrollProgress={scrollProgress} />
